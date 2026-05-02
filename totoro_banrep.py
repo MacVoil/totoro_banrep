@@ -194,7 +194,6 @@ year = datetime.today().year - 5
 
 url = f"https://totoro.banrep.gov.co/nsi-jax-ws/rest/data/ESTAT,DF_MONAGG_MONTHLY_HIST,1.0/all/ALL/?startPeriod={year}&dimensionAtObservation=TIME_PERIOD&detail=full"
 
-# Request
 response = requests.get(url)
 root = ET.fromstring(response.content)
 
@@ -204,7 +203,6 @@ ns = {
 
 data = []
 
-# Loop por cada serie
 for series in root.findall(".//generic:Series", ns):
 
     series_info = {}
@@ -226,6 +224,8 @@ for series in root.findall(".//generic:Series", ns):
 ams_df = pd.DataFrame(data)
 
 ams_df = ams_df.drop(columns=['REFERENCE_AREA','EXPENDITURE','ACTIVITY','UNIT_MEASURE','FREQ'])
+
+ams_df["Fecha"] = pd.to_datetime(ams_df["Fecha"], format="%Y-%m") + pd.offsets.MonthEnd(0)
 
 
 # IBR
